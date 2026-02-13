@@ -5,10 +5,11 @@ import random
 from modules.claim_parser import extract_features, detect_risky_words
 from modules.question_engine import get_question
 from modules.evaluator import evaluate_answer
+from modules.legal_engine import analyze_indian_patent_compliance
 
 
 # ===============================
-# PRIOR ART COMBINATION (kept in app for now)
+# PRIOR ART COMBINATION ENGINE
 # ===============================
 def generate_prior_art_combination():
     d1 = "an adaptive monitoring agent system"
@@ -44,18 +45,43 @@ claim = st.text_area("Paste your patent claim")
 
 if claim:
 
-    # Feature extraction (from module)
+    # -------------------------------
+    # Feature Extraction
+    # -------------------------------
     st.subheader("Extracted Claim Features:")
     features = extract_features(claim)
     for f in features:
         st.write("- " + f)
 
-    # Risk detection (from JSON via module)
+    # -------------------------------
+    # Risky Word Detection
+    # -------------------------------
     detected = detect_risky_words(claim)
     if detected:
         st.warning("Risky drafting terms detected:")
         for d in detected:
             st.write("- " + d)
+
+    # -------------------------------
+    # Indian Patent Act Compliance
+    # -------------------------------
+    st.subheader("Indian Patent Act Compliance Check")
+
+    legal_issues = analyze_indian_patent_compliance(claim)
+
+    if legal_issues:
+        for issue in legal_issues:
+            st.error(f"Potential Issue under {issue['section']}")
+            st.write("Reason:", issue["reason"])
+            st.info("Suggested Defense Strategy:")
+            st.write(issue["defense"])
+    else:
+        st.success("No immediate Indian Patent Act objections detected.")
+
+
+# ===============================
+# HEARING SIMULATION
+# ===============================
 
 mode = st.selectbox(
     "Select Objection Type",
@@ -64,11 +90,9 @@ mode = st.selectbox(
 
 if st.button("Start Hearing"):
 
-    # Get question from module
     question = get_question(mode)
     st.session_state["question"] = question
 
-    # Generate examiner attack
     if mode == "Inventive Step":
         attack = generate_prior_art_combination()
     else:
@@ -89,7 +113,6 @@ if "question" in st.session_state:
 
     if st.button("Submit Answer"):
 
-        # Evaluate using module
         score, feedback = evaluate_answer(answer)
 
         st.subheader("Score:")

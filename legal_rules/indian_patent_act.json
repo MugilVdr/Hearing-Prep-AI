@@ -1,0 +1,12 @@
+{
+  "section_3k": {
+    "trigger_keywords": ["algorithm", "software", "program", "AI model", "data processing"],
+    "rejection_reason": "Computer program per se is not patentable under Section 3(k).",
+    "defense_strategy": "Demonstrate technical effect beyond software implementation."
+  },
+  "section_3d": {
+    "trigger_keywords": ["derivative", "new form", "salt", "polymorph"],
+    "rejection_reason": "New form of known substance without enhanced efficacy is not patentable under Section 3(d).",
+    "defense_strategy": "Provide evidence of enhanced therapeutic efficacy."
+  }
+}
